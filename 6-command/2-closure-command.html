@@ -1,0 +1,37 @@
+<html>
+    <body>
+        <button id="execute">execute</button>
+        <button id="undo">undno</button>
+    </body>
+    <script>
+        var Tv = {
+            open: function() {
+                console.log('opening tv')
+            },
+            close: function() {
+                console.log('closing tv')
+            }
+        }
+        var createCommand = function(receiver) {
+            var execute = function() {
+                return receiver.open();
+            }
+            var undo = function() {
+                return receiver.close();
+            }
+            return {
+                execute,
+                undo,
+            }
+        };
+        var setCommand = function(command) {
+            document.getElementById('execute').onclick = function() {
+                command.execute();
+            }
+            document.getElementById('undo').onclick = function() {
+                command.undo();
+            }
+        }
+        setCommand(createCommand(Tv));
+    </script>
+</html>

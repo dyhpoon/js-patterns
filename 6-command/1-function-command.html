@@ -1,0 +1,42 @@
+<html>
+    <body>
+        <button id="execute">execute</button>
+        <button id="undo">undo</button>
+    </body>
+    <script>
+        // command pattern basically has three entites,
+        // sender, receiver and command
+        // the idea is to separate sender and receiver
+        var Tv = {
+            open: function() {
+                console.log('opening tv')
+            },
+            close: function() {
+                console.log('closing tv')
+            }
+        }
+
+        var OpenTvCommand = function(receiver) {
+            this.receiver = receiver
+        }
+
+        OpenTvCommand.prototype.execute = function() {
+            this.receiver.open();
+        }
+
+        OpenTvCommand.prototype.undo = function() {
+            this.receiver.close();
+        }
+
+        var setCommand = function (command) {
+            document.getElementById('execute').onclick = function() {
+                command.execute();
+            }
+            document.getElementById('undo').onclick = function() {
+                command.undo();
+            }
+        }
+
+        setCommand(new OpenTvCommand(Tv));
+    </script>
+</html>

@@ -1,0 +1,24 @@
+<html>
+    <body>
+    </body>
+    <script>
+        var getSingle = function (fn) {
+            var self = this;
+            var ret;
+            var args = [].slice.call(arguments);
+            return function() {
+                return ret || (ret = fn.apply(self, args));
+            }
+        }
+        
+        var getScript = getSingle(() => {
+            return document.createElement('script');
+        })
+
+        var script1 = getScript();
+        var script2 = getScript();
+
+        console.log(script1 === script2);
+
+    </script>
+</html>
