@@ -1,0 +1,55 @@
+<html>
+    <body>
+        <div id="div1">click me!</div>
+        <script>
+            var addEvent = function(elem, type, handler) {
+                if (window.addEventListener) {
+                    return elem.addEventListener(type, handler, false)
+                }
+                if (window.attachEvent) {
+                    return elem.attachEvent('on' + type, handler);
+                }
+            }
+
+            // avoid executing if statement on every call
+            var betterAddEvent = (function() {
+                if (window.addEventListener) {
+                    return function(elem, type, handler) {
+                        elem.addEventListener(type, handler, false);
+                    }
+                }
+                if (window.attachEvent) {
+                    return function(elem, type, handler) {
+                        elem.attachEvent('on' + type, handler);
+                    }
+                }
+            })()
+
+            // but there is still a problem on second one
+            // it is still an immediate invoke function
+            // what if we never actually need to function
+            // this will slightly delay the application start time
+            var lazyLoadingAddEvent = function() {
+                if (window.addEventListener) {
+                    lazyLoadingAddEvent = function(elem, type, handler) {
+                        elem.addEventListener(type, handler, false)
+                    }
+                } else if (window.attachEvent) {
+                    lazyLoadingAddEvent = function(elem, type, handler) {
+                        elem.attachEvent('on' + type, handler)
+                    }
+                }
+                lazyLoadingAddEvent(elem, type, handler);
+            }
+
+            var div = document.getElementById('div');
+            lazyLoadingAddEvent(div, 'click', function() {
+                alert(1);
+            })
+            lazyLoadingAddEvent(div, 'click', function() {
+                alert(2);
+            })
+
+        </script>
+    </body>
+</html>
