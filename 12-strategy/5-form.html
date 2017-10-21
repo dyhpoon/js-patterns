@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Form</title>
+</head>
+<body>
+    <form id="registerForm">
+        please insert your name: <input type="text" name="userName"/><br/>
+        please insert your password: <input type="text" name="password"/><br/>
+        please insert your number: <input type="text" name="phoneNumber"><br/>
+        <input type="submit">
+    </form>
+    <script>
+        // strategies
+        var strategies = {
+            isNotEmpty: function(value, errorMessage) {
+                if (value === '') {
+                    return errorMessage
+                }
+            },
+            minLength: function(value, length, errorMessage) {
+                if (value.length < length) {
+                    return errorMessage
+                }
+            },
+            isMobile: function(value, errorMessage) {
+                if (/^(1[3|5|8][0-9]{9}$)/.test(registerForm.phoneNumber.value)) {
+                    return errorMessage
+                }
+            }
+        }
+
+        // context
+        var Validator = function() {
+            this.cache = []
+        }
+        Validator.prototype.add = function(dom, rule, errorMsg) {
+            var ary = rule.split(':')
+            this.cache.push(() => {
+                var strategy = ary.shift()
+                ary.unshift(dom.value)
+                ary.push(errorMsg)
+                return strategies[strategy].apply(dom, ary)
+            })
+        }
+        Validator.prototype.start = function() {
+            for (var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {
+                var msg = validatorFunc();
+                if (msg) {
+                    return msg;
+                }
+            }
+        }
+        var validateFunc = function() {
+            var validator = new Validator();
+            
+            validator.add(registerForm.userName, 'isNotEmpty', 'username cannot be empty')
+            validator.add(registerForm.password, 'minLength:6', 'password length cannot be less than 6')
+            validator.add(registerForm.userName, 'isMobile', 'invalid phone number')
+
+            var errorMsg = validator.start();
+            return errorMsg
+        }
+
+        // execute
+        var registerForm = document.getElementById('registerForm')
+        registerForm.onsubmit = function(e) {
+            e.preventDefault();
+            var errorMsg = validateFunc();
+            if (errorMsg) {
+                alert(errorMsg)
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
