@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Button</title>
+</head>
+<body>
+    <button class="" id="button1">click1</button>
+    <button class="" id="button2">click2</button>
+    <button class="" id="button3">click3</button>
+</body>
+<script>
+    var button1 = document.getElementById('button1')
+    var button2 = document.getElementById('button2')
+    var button3 = document.getElementById('button3')
+
+    var setCommand = function(button, command) {
+        button.onclick = function() {
+            command.execute();
+        }
+    }
+
+    var MenuBar = {
+        refresh: function() {
+            console.log('refresh menu')
+        }
+    }
+
+    var SubMenu = {
+        add: function() {
+            console.log('add menu')
+        },
+        del: function() {
+            console.log('remove menu')
+        }
+    }
+
+    var RefreshMenuBarCommand = function(receiver) {
+        this.receiver = receiver
+    }
+
+    RefreshMenuBarCommand.prototype.execute = function() {
+        this.receiver.refresh()
+    }
+
+    var AddSubMenuCommand = function(receiver) {
+        this.receiver = receiver
+    }
+
+    AddSubMenuCommand.prototype.execute = function() {
+        this.receiver.add()
+    }
+
+    var DeleteSubMenuCommand = function(receiver) {
+        this.receiver = receiver
+    }
+
+    DeleteSubMenuCommand.prototype.execute = function() {
+        this.receiver.del()
+    }
+
+    var refreshMenuBarCommand = new RefreshMenuBarCommand(MenuBar)
+    var addSubMenuCommand = new AddSubMenuCommand(SubMenu)
+    var delSubMenuCommand = new DeleteSubMenuCommand(SubMenu)
+
+    setCommand(button1, refreshMenuBarCommand)
+    setCommand(button2, addSubMenuCommand)
+    setCommand(button3, delSubMenuCommand)
+</script>
+</html>
