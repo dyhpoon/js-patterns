@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mini Console</title>
+</head>
+<body>
+    Press a and check console
+    <script>
+        // virtual proxy
+        var miniConsole = function() {
+            var cache = []
+
+            var handler = function(event) {
+                if (event.keyCode === 65) {
+                    var script = document.createElement('script')
+                    // load real context
+                    script.onload = function() {
+                        for (var i = 0, fn; fn = cache[i++];) {
+                            fn()
+                        }
+                        cache = []
+                    }
+                    script.src = './util-miniConsole.js'
+                    document.head.appendChild(script)
+                    document.body.removeEventListener('keydown', handler) // only load once
+                }
+            }
+
+            document.body.addEventListener('keydown', handler, false)
+
+            return {
+                log: function() {
+                    var arg = arguments
+                    cache.push(function() {
+                        return miniConsole.log.apply(miniConsole, arg)
+                    })
+                }
+            }
+        }()
+
+        miniConsole.log(11);
+
+    </script>
+</body>
+</html>
