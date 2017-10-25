@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Upload</title>
+</head>
+<body>
+</body>
+<script>
+    var id = 0
+    window.startUpload = function(uploadType, files) {
+        for (var i = 0, file; file = files[i++];) {
+            var uploadObj = new Upload(uploadType, file.fileName, file.fileSize)
+            uploadObj.init(id++)
+        }
+    }
+
+    // model
+    var Upload = function(uploadType, fileName, fileSize) {
+        this.uploadType = uploadType
+        this.fileName = fileName
+        this.fileSize = fileSize
+        this.dom = null
+    }
+
+    Upload.prototype.init = function(id) {
+        var self = this
+        this.id = id
+        this.dom = document.createElement('div')
+        this.dom.innerHTML = 
+        `<span>fileName: ${this.fileName}, fileSize: ${this.fileSize}</span><button class="delFile">delete</button>`
+
+        this.dom.querySelector('.delFile').onclick = function() {
+            self.delFile()
+        }
+        document.body.appendChild(this.dom)
+    }
+
+    Upload.prototype.delFile = function() {
+        if (this.fileSize < 3000) {
+            return this.dom.parentNode.removeChild(this.dom)
+        }
+        if (window.confirm('confirm deleting this file: ' + this.fileName)) {
+            return this.dom.parentNode.removeChild(this.dom)
+        }
+    }
+
+    startUpload('plugin', [
+        {
+            fileName: '1.txt',
+            fileSize: 1000
+        },
+        {
+            fileName: '2.txt',
+            fileSize: 2000
+        },
+        {
+            fileName: '3.txt',
+            fileSize: 3000
+        }
+    ]);
+
+    startUpload('flash', [
+        {
+            fileName: '4.txt',
+            fileSize: 1000
+        },
+        {
+            fileName: '5.txt',
+            fileSize: 3000
+        },
+        {
+            fileName: '6.txt',
+            fileSize: 5000
+        },
+    ]);
+</script>
+</html>
